@@ -1,0 +1,70 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-12-28 16:01+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: mtg-deck-util.php:121
+msgid "Magic the Gaghering Deck Utility"
+msgstr ""
+
+#: mtg-deck-util.php:122
+msgid "MtG Deck Utility"
+msgstr ""
+
+#: mtg-deck-util.php:130 mtg-deck-util.php:131
+msgid "Add New Deck"
+msgstr ""
+
+#: mtg-deck-util.php:154
+msgid "Standard"
+msgstr ""
+
+#: mtg-deck-util.php:155
+msgid "Modern"
+msgstr ""
+
+#: mtg-deck-util.php:156
+msgid "Legacy"
+msgstr ""
+
+#: pages/deck_form.php:2
+msgid "Register New Deck"
+msgstr ""
+
+#: pages/deck_form.php:4
+msgid "Deckname"
+msgstr ""
+
+#: pages/deck_form.php:6
+msgid "Player"
+msgstr ""
+
+#: pages/deck_form.php:8
+msgid "Reference Key"
+msgstr ""
+
+#: pages/deck_form.php:10
+msgid "Format"
+msgstr ""
+
+#: pages/deck_form.php:20
+msgid "Decklist"
+msgstr ""
+
+#: pages/deck_form.php:22
+msgid "Register Deck"
+msgstr ""
