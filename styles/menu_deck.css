@@ -1,0 +1,17 @@
+#register_deck_div{
+    width:400px;
+}
+
+div.elem_name{
+    float: left;
+    text-align: right;
+    width: 100px;
+}
+
+div.elem{
+    margin-left: 105px;
+}
+
+div.submit{
+    text-align: right;
+}
