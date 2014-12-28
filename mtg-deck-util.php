@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Mtg-deck-util
+Plugin Name: MtgDeckUtil
 Version: 0.1-alpha
 Description: Magic the Gathering Deck Utilities for Wordpress
 Author: Kazunori Kimura
@@ -19,8 +19,34 @@ class MtGDeckUtil{
 
 	/// Initialize the plugin
 	function __construct(){
+		/// plugin menu page
+		add_action( 'admin_menu', array( $this, 'plugin_menu' ) );
 	}
 
+	function plugin_menu(){
+		add_menu_page(
+			__('Magic the Gaghering Deck Utility', 'mtg-deck-util'),
+			__('MtG Deck Utility', 'mtg-deck-util'),
+			'manage_options',
+			'mtgdeckutil',
+			array( $this, 'menu_page' )
+		);
+		add_submenu_page(
+			'mtgdeckutil',
+			__('Add New Deck', 'mtg-deck-util'),
+			__('Add New Deck', 'mtg-deck-util'),
+			'manage_options',
+			'mtgdeckutil-add-deck',
+			array( $this, 'register_new_deck' )
+		);
+	}
+
+	function menu_page(){
+	}
+
+	function register_new_deck(){
+	}
+	
 	/// callback to register_activation_hook
 	public static function on_activate(){
 		if ( ! current_user_can( 'activate_plugins' ) )
@@ -47,3 +73,8 @@ class MtGDeckUtil{
 	}
 }
 
+function MtGDeckUtil(){
+	global $mtg_deck_util;
+	$mtg_deck_util = new MtGDeckUtil();
+}
+add_action( 'init', 'MtGDeckUtil' );
