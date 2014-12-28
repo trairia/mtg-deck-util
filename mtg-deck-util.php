@@ -20,7 +20,8 @@ class MtGDeckUtil{
 
 	/// constants
 	const MTG_DECK_UTIL_VER   = "0.1";
-	const MTG_DECKLIST_DB_VER = 0;
+	const MTG_DECKLIST_STR    = "mtg_decklist";
+	const MTG_DECKLIST_DB_VER = "0.1";
 	
 	/// callback to register_activation_hook
 	public static function on_activate(){
@@ -28,6 +29,7 @@ class MtGDeckUtil{
 			return;
 		$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
 		check_admin_referer( "activate-plugin_${plugin}" );
+		self::update_db_check();
 	}
 
 	/// callback to register_deactivation_hook
@@ -52,8 +54,9 @@ class MtGDeckUtil{
 	static function db_install(){
 		global $wpdb;
 		$collate = $wpdb->get_charset_collate();
+		$table_name = $wpdb->prefix . self::MTG_DECKLIST_STR;
 		$sql = <<<SQL
-CREATE TABLE decklist (
+CREATE TABLE $table_name (
 id mediumint(9) NOT NULL AUTO_INCREMENT,
 refkey varchar(30) NOT NULL,
 deckname varchar(40) NOT NULL,
@@ -69,6 +72,13 @@ UNIQUE KEY id (id)
 SQL;
 		require_once( ABSPATH . "wp-admin/includes/upgrade.php");
 		dbDelta( $sql );
+	}
+
+	public static function update_db_check(){
+		if ( get_option( 'mtg_decklist_db_version' ) != self::MTG_DECKLIST_DB_VER ){
+			self::db_install();
+			update_option( 'mtg_decklist_db_version', self::MTG_DECKLIST_DB_VER );
+		}
 	}
 	
 	/// Initialize the plugin
@@ -92,7 +102,7 @@ SQL;
 
 	function register_options(){
 		/// data base version
-		add_option( 'mtg_decklist_version' );
+		add_option( 'mtg_decklist_db_version' );
 	}
 	
 	function admin_init(){
@@ -149,4 +159,5 @@ function MtGDeckUtil(){
 	global $mtg_deck_util;
 	$mtg_deck_util = new MtGDeckUtil();
 }
+add_action( 'plugin_loaded', array( 'MtGDeckUtil', 'update_db_check' ) );
 add_action( 'init', 'MtGDeckUtil' );
