@@ -45,6 +45,53 @@ class MtGDeckUtil{
 	}
 
 	function register_new_deck(){
+		$formats = array(
+			'Standard' => __('Standard', 'mtg-deck-util'),
+			'Modern' => __('Modern', 'mtg-deck-util'),
+			'Legacy' => __('Legacy', 'mtg-deck-util')
+		);
+
+?>
+	<div id="register_deck_div">
+		<h2 class="menu_title"><?php echo __("Register New Deck", 'mtg-deck-util') . "<br/>" ?></h2>
+		<form action="<?php echo esc_url( $_SERVER['REQUEST_URI']) ?>" method="post">
+			<table border="0">
+				<tr>
+					<td align="right"><?php echo __( 'Player', 'mtg-deck-util' ) ?>:</td>
+					<td><input type="text" name="player_name" size="40">
+					</td>
+				</tr>
+				<tr>
+					<td align="right"><?php echo __( 'Deckname', 'mtg-deck-util' ) ?>:</td>
+					<td><input type="text" name="deck_name" size="40">
+					</td>
+				</tr>
+				<tr>
+					<td align="right"><?php echo __( 'Format', 'mtg-deck-util' ) ?>:</td>
+					<td>
+						<select name="format">
+							<?php
+							foreach ( $formats as $t => $name ) {
+								echo "<option value=\"$t\">$name</option>";
+							}
+							?>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td align="right" valign="top"><?php echo __( 'Decklist', 'mtg-deck-util' ) ?>:</td>
+					<td><textarea name="decklist" align="left" rows="20" cols="40"></textarea></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<input type="submit" align="right"" value=<?php echo __('Register Deck', 'mtg-deck-util') ?>>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+<?php
 	}
 	
 	/// callback to register_activation_hook
