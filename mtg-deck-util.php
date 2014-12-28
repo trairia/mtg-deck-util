@@ -93,6 +93,10 @@ class MtGDeckUtil{
 	function load_deck_menu_style(){
 		wp_enqueue_style( 'menu_deck' );
 	}
+
+	function draw_deck_list( $deck ){
+		include(__DIR__ . "/pages/decklist.php");
+	}
 	
 	function register_new_deck(){
 		
