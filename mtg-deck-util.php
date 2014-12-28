@@ -102,6 +102,9 @@ SQL;
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		/// plugin menu page
 		add_action( 'admin_menu', array( $this, 'plugin_menu' ) );
+
+		/// shortcode
+		add_shortcode( 'deck', array( $this, 'deck_import' ) );
 	}
 
 	function register_styles(){
@@ -152,7 +155,7 @@ SQL;
 	function menu_page(){
 		global $wpdb;
 		$ret = $wpdb->get_results(<<<SQL
-SELECT deckname FROM wp_mtg_decklist
+SELECT refkey FROM wp_mtg_decklist
 SQL
 		);
 		DEBUG_DUMP( $ret );
@@ -163,6 +166,30 @@ SQL
 		wp_enqueue_style( 'menu_deck' );
 	}
 
+	/// shortcode deck
+	function deck_import( $atts, $contents = null ){
+		global $wpdb;
+		$atts = shortcode_atts(
+			array(
+				'ref' => ''
+			),
+			$atts,
+			'deck'
+		);
+
+		if ( empty( $atts['ref'] ) ){
+			return;
+		} else {
+			$result = $wpdb->get_row(
+				$wpdb->prepare(
+					"SELECT * FROM wp_mtg_decklist WHERE refkey = %s",
+					$atts['ref']
+				)
+			);
+			DEBUG_DUMP( $result );
+		}
+	}
+	
 	function draw_deck_list( $deck ){
 		include(__DIR__ . "/pages/decklist.php");
 	}
@@ -188,7 +215,7 @@ SQL
 			
 			if ( ! empty( $decklisttxt ) ){
 				list( $decklist, $manacurve, $colorpie, $typepie )
-					= $this->parse_deck( $decklist );
+					= $this->parse_deck( $decklisttxt );
 				$this->store_deck_to_db(
 					$refkey,
 					$deckname,
@@ -220,7 +247,7 @@ SQL
 			'format' => $format,
 			'player' => $player,
 			'decklist' => $decklisttxt,
-			'decklist_json' => json_encode( $decklisttxt ),
+			'decklist_json' => json_encode( $decklist ),
 			'manacurve_json' => json_encode( $manacurve ),
 			'colorpie_json' => json_encode( $colorpie ),
 			'typepie_json' => json_encode( $typepie )
@@ -239,9 +266,8 @@ SQL
 		$lines = explode( "\n", $deck );
 		$lines = array_map( 'trim', $lines );
 		$lines = array_filter( $lines, 'strlen' );
-
+		
 		/// parse lines to deck data
-
 		$deck = array(
 			"MainBoard" => array(),
 			"SideBoard" => array() );
@@ -281,7 +307,7 @@ SQL
 				/// get main card type
 				if ( !is_null( $ret ) ){
 					/// decide cardname
-					$retname = $atts["lang"] ? $ret[$atts["lang"]] : $name;
+					$retname = $ret['ja'];
 
 					if ( $target == "MainBoard" ){
 						/// for color pie
