@@ -81,7 +81,8 @@ decklist_json text,
 manacurve_json text,
 colorpie_json text,
 typepie_json text,
-INDEX (refkey)
+PRIMARY KEY  (refkey),
+INDEX decklistidx (id)
 ) $collate;
 SQL;
 		require_once( ABSPATH . "wp-admin/includes/upgrade.php");
@@ -91,7 +92,7 @@ SQL;
 	public static function update_db_check(){
 		if ( get_option( 'mtg_decklist_db_version' ) != self::MTG_DECKLIST_DB_VER ){
 			self::db_install();
-			update_option( 'mtg_decklist_db_version', self::MTG_DECKLIST_DB_VER );
+//			update_option( 'mtg_decklist_db_version', self::MTG_DECKLIST_DB_VER );
 		}
 	}
 	
@@ -149,6 +150,7 @@ SQL;
 	}
 
 	function menu_page(){
+		DEBUG_DUMP( get_option( 'mtg_decklist_db_version' ) );
 	}
 
 	/// load deck_menu.css
@@ -161,7 +163,8 @@ SQL;
 	}
 	
 	function register_new_deck(){
-		
+		global $wpdb;
+
 		$formats = array(
 			'Standard' => __('Standard', 'mtg-deck-util'),
 			'Modern' => __('Modern', 'mtg-deck-util'),
@@ -179,6 +182,15 @@ SQL;
 			$format   = $_POST['format'];
 			$refkey   = sanitize_text_field( $_POST['ref_key'] );
 			$decklist = esc_textarea( $_POST["decklist"] );
+			$find_dup_sql = <<<SQL
+SELECT refkey FROM wp_mtg_decklist WHERE refkey = %s
+SQL;
+			$is_dups = $wpdb->get_col(
+				$wpdb->prepare( $find_dup_sql, $ref_key )
+			);
+			if ( is_empty( $is_dups ) ){
+				/// add to db
+			}
 		}
 		
 		include(__DIR__ . "/pages/deck_form.php");
