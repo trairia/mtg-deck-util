@@ -18,7 +18,7 @@
 			</select>
 		</div>
 		<div class="elem_name"><?php echo __( 'Decklist', 'mtg-deck-util' ) ?>:</div>
-		<div class="elem"><textarea name="decklist" align="left" rows="20" cols="40"><?php echo $decklist ?></textarea></div>
+		<div class="elem"><textarea name="decklist" align="left" rows="20" cols="40"><?php echo $decklisttxt ?></textarea></div>
 		<div class="submit"><input type="submit" name="deck-submitted" align="right"" value=<?php echo __('Register Deck', 'mtg-deck-util') ?>></div>
 	</form>
 </div>
