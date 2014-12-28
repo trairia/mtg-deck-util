@@ -184,13 +184,27 @@ SQL
 				$wpdb->prepare(
 					"SELECT * FROM wp_mtg_decklist WHERE refkey = %s",
 					$atts['ref']
-				)
+				),
+				ARRAY_A
 			);
-			DEBUG_DUMP( $result );
+			$this->draw_deck_list( $result );
 		}
 	}
 	
 	function draw_deck_list( $deck ){
+		$deckname  = $deck['deckname'];
+		$format    = $deck['format'];
+		$player    = $deck['player'];
+		$decklist  = json_decode( $deck['decklist_json'], true);
+		$mainboard = $decklist["MainBoard"];
+		$lands     = isset( $mainboard[LAND] )        ? $mainboard[LAND]        : null;
+		$creatures = isset( $mainboard[CREATURE] )    ? $mainboard[CREATURE]    : null;
+		$instant   = isset( $mainboard[INSTANT] )     ? $mainboard[INSTANT]     : null;
+		$sorcery   = isset( $mainboard[SORCERY] )     ? $mainboard[SORCERY]     : null;
+		$artifact  = isset( $mainboard[ARTIFACT] )    ? $mainboard[ARTIFACT]    : null;
+		$enchant   = isset( $mainboard[ENCHANTMENT] ) ? $mainboard[ENCHANTMENT] : null;
+		$planeswlaker = isset( $mainboard[PLANESWALKER] ) ? $mainboard[PLANESWALKER] : null;
+		$sideboard = $decklist["SideBoard"];
 		include(__DIR__ . "/pages/decklist.php");
 	}
 	
