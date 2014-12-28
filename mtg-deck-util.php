@@ -18,6 +18,10 @@ register_uninstall_hook(    __FILE__, array( 'MtGDeckUtil', 'on_uninstall' ) );
 /// Plugin Implement
 class MtGDeckUtil{
 
+	/// constants
+	const MTG_DECK_UTIL_VER   = "0.1";
+	const MTG_DECKLIST_DB_VER = 0;
+	
 	/// callback to register_activation_hook
 	public static function on_activate(){
 		if ( ! current_user_can( 'activate_plugins' ) )
@@ -47,22 +51,54 @@ class MtGDeckUtil{
 	/// on activation
 	static function db_install(){
 		global $wpdb;
+		$collate = $wpdb->get_charset_collate();
+		$sql = <<<SQL
+CREATE TABLE decklist (
+id mediumint(9) NOT NULL AUTO_INCREMENT,
+refkey varchar(30) NOT NULL,
+deckname varchar(40) NOT NULL,
+format varchar(20) NOT NULL,
+player varchar(40),
+decklist text,
+decklist_json text,
+manacurve_json text,
+colorpie_json text,
+typepie_json text,
+UNIQUE KEY id (id)
+) $collate;
+SQL;
+		require_once( ABSPATH . "wp-admin/includes/upgrade.php");
+		dbDelta( $sql );
 	}
 	
 	/// Initialize the plugin
 	function __construct(){
-
 		/// admin_hook
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		/// plugin menu page
 		add_action( 'admin_menu', array( $this, 'plugin_menu' ) );
 	}
 
-	function admin_init(){
+	function register_styles(){
 		wp_register_style(
 			'menu_deck',
 			plugins_url( 'styles/menu_deck.css', __FILE__ )
 		);
+	}
+	
+	function enqueue_scripts(){
+		wp_enqueue_script( 'google-chart', 'https://www.google.com/jsapi' );
+	}
+
+	function register_options(){
+		/// data base version
+		add_option( 'mtg_decklist_version' );
+	}
+	
+	function admin_init(){
+		$this->register_styles();
+		$this->enqueue_scripts();
+		$this->register_options();
 	}
 
 	function plugin_menu(){
