@@ -150,7 +150,12 @@ SQL;
 	}
 
 	function menu_page(){
-		DEBUG_DUMP( get_option( 'mtg_decklist_db_version' ) );
+		global $wpdb;
+		$ret = $wpdb->get_results(<<<SQL
+SELECT deckname FROM wp_mtg_decklist
+SQL
+		);
+		DEBUG_DUMP( $ret );
 	}
 
 	/// load deck_menu.css
@@ -163,8 +168,6 @@ SQL;
 	}
 	
 	function register_new_deck(){
-		global $wpdb;
-
 		$formats = array(
 			'Standard' => __('Standard', 'mtg-deck-util'),
 			'Modern' => __('Modern', 'mtg-deck-util'),
@@ -174,28 +177,63 @@ SQL;
 		$deckname = '';
 		$player   = '';
 		$refkey   = '';
-		$decklist = '';
+		$decklisttxt = '';
 		
 		if ( isset( $_POST['deck-submitted'] ) ){
 			$deckname = sanitize_text_field( $_POST['deck_name'] );
 			$player   = sanitize_text_field( $_POST['player_name'] );
 			$format   = $_POST['format'];
 			$refkey   = sanitize_text_field( $_POST['ref_key'] );
-			$decklist = esc_textarea( $_POST["decklist"] );
-			$find_dup_sql = <<<SQL
-SELECT refkey FROM wp_mtg_decklist WHERE refkey = %s
-SQL;
-			$is_dups = $wpdb->get_col(
-				$wpdb->prepare( $find_dup_sql, $ref_key )
-			);
-			if ( is_empty( $is_dups ) ){
-				/// add to db
+			$decklisttxt = trim( esc_textarea( $_POST["decklist"] ) );
+			
+			if ( ! empty( $decklisttxt ) ){
+				list( $decklist, $manacurve, $colorpie, $typepie )
+					= $this->parse_deck( $decklist );
+				$this->store_deck_to_db(
+					$refkey,
+					$deckname,
+					$format,
+					$player,
+					$decklisttxt,
+					$decklist,
+					$manacurve,
+					$colorpie,
+					$typepie
+					);
 			}
 		}
 		
 		include(__DIR__ . "/pages/deck_form.php");
 	}
 
+	function store_deck_to_db( $ref_key, $deck_name, $format, $player, $decklisttxt,
+							   $decklist, $manacurve, $colorpie, $typepie ){
+
+		$manacurve_str = json_encode( $manacurve );
+		$colorpie_str = json_encode( $colorpie );
+		$typepie_str = json_encode( $typepie );
+
+		global $wpdb;
+		$row = array(
+			'refkey' => $ref_key,
+			'deckname' => $deck_name,
+			'format' => $format,
+			'player' => $player,
+			'decklist' => $decklisttxt,
+			'decklist_json' => json_encode( $decklisttxt ),
+			'manacurve_json' => json_encode( $manacurve ),
+			'colorpie_json' => json_encode( $colorpie ),
+			'typepie_json' => json_encode( $typepie )
+		);
+
+		$row_fmt = array_fill( 0, 9, '%s' );
+		$wpdb->replace(
+			'wp_mtg_decklist',
+			$row,
+			$row_fmt
+		);
+	}
+	
 	function parse_deck( $deck ){
 		
 		$lines = explode( "\n", $deck );
@@ -324,6 +362,8 @@ SQL;
 		foreach ( $type_hist as $k => $v ){
 			array_push( $ret_types, array( $k, $v ) );
 		}
+
+		return array( $deck, $ret_cmc_hist, $ret_colors, $ret_types );
 	}
 }
 
