@@ -14,9 +14,35 @@ Domain Path: /languages
 register_activation_hook(   __FILE__, array( 'MtGDeckUtil', 'on_activate' ) );
 register_deactivation_hook( __FILE__, array( 'MtGDeckUtil', 'on_deactive' ) );
 register_uninstall_hook(    __FILE__, array( 'MtGDeckUtil', 'on_uninstall' ) );
+
 /// Plugin Implement
 class MtGDeckUtil{
 
+	/// callback to register_activation_hook
+	public static function on_activate(){
+		if ( ! current_user_can( 'activate_plugins' ) )
+			return;
+		$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
+		check_admin_referer( "activate-plugin_${plugin}" );
+	}
+
+	/// callback to register_deactivation_hook
+	public static function on_deactivate(){
+		if ( ! current_user_can( 'activate_plugins' ) )
+			return;
+		$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
+		check_admin_referer( "deactivate-plugin_${plugin}" );
+	}
+
+	/// callback to register_uninstall_hook
+	public static function on_uninstall(){
+		if ( ! current_user_can( 'activate_plugins' ) )
+			return;
+		check_admin_referer( 'bulk-plugins' );
+		if ( __FILE__ != WP_UNINSTALL_PLUGIN )
+			return;
+	}
+	
 	/// Initialize the plugin
 	function __construct(){
 
@@ -67,7 +93,6 @@ class MtGDeckUtil{
 			'Modern' => __('Modern', 'mtg-deck-util'),
 			'Legacy' => __('Legacy', 'mtg-deck-util')
 		);
-
 ?>
 	<div id="register_deck_div">
 		<div class="header"><h2 class="menu_title"><?php echo __("Register New Deck", 'mtg-deck-util') . "<br/>" ?></h2></div>
@@ -96,30 +121,6 @@ class MtGDeckUtil{
 <?php
 	}
 	
-	/// callback to register_activation_hook
-	public static function on_activate(){
-		if ( ! current_user_can( 'activate_plugins' ) )
-			return;
-		$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
-		check_admin_referer( "activate-plugin_${plugin}" );
-	}
-
-	/// callback to register_deactivation_hook
-	public static function on_deactivate(){
-		if ( ! current_user_can( 'activate_plugins' ) )
-			return;
-		$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
-		check_admin_referer( "deactivate-plugin_${plugin}" );
-	}
-
-	/// callback to register_uninstall_hook
-	public static function on_uninstall(){
-		if ( ! current_user_can( 'activate_plugins' ) )
-			return;
-		check_admin_referer( 'bulk-plugins' );
-		if ( __FILE__ != WP_UNINSTALL_PLUGIN )
-			return;
-	}
 }
 
 function MtGDeckUtil(){
