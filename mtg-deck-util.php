@@ -14,6 +14,16 @@ Domain Path: /languages
 define( "USE_SQLITE", true);
 define( "SQLITE_DB_PATH", __DIR__ . '/db/mtgdb.db' );
 
+/// define card type
+define( "CREATURE"    , 0x01);
+define( "LAND"        , 0x02);
+define( "ARTIFACT"    , 0x04);
+define( "ENCHANTMENT" , 0x08);
+define( "INSTANT"     , 0x10);
+define( "SORCERY"     , 0x20);
+define( "PLANESWALKER", 0x40);
+define( "TRIBAL"      , 0x80);
+
 /// register hooks
 register_activation_hook(   __FILE__, array( 'MtGDeckUtil', 'on_activate' ) );
 register_deactivation_hook( __FILE__, array( 'MtGDeckUtil', 'on_deactive' ) );
@@ -71,7 +81,7 @@ decklist_json text,
 manacurve_json text,
 colorpie_json text,
 typepie_json text,
-UNIQUE KEY id (id)
+INDEX (refkey)
 ) $collate;
 SQL;
 		require_once( ABSPATH . "wp-admin/includes/upgrade.php");
@@ -94,6 +104,8 @@ SQL;
 	}
 
 	function register_styles(){
+
+		/// css for deck register 
 		wp_register_style(
 			'menu_deck',
 			plugins_url( 'styles/menu_deck.css', __FILE__ )
