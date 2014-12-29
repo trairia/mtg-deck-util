@@ -92,7 +92,7 @@ SQL;
 	public static function update_db_check(){
 		if ( get_option( 'mtg_decklist_db_version' ) != self::MTG_DECKLIST_DB_VER ){
 			self::db_install();
-//			update_option( 'mtg_decklist_db_version', self::MTG_DECKLIST_DB_VER );
+			update_option( 'mtg_decklist_db_version', self::MTG_DECKLIST_DB_VER );
 		}
 	}
 	
