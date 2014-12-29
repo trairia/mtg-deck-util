@@ -314,7 +314,11 @@ SQL
 								   array( PDO::ATTR_ERRMODE => ERRMODE_EXCEPTION,
 										  PDO::ATTR_EMULATE_PREPARES => false ) );
 				}
-				$stmt = $pdo->prepare('SELECT * FROM carddata INNER JOIN cardnames ON carddata.multiverseid = cardnames.multiverseid WHERE carddata.cardname = :cardname' );
+				$stmt = $pdo->prepare(<<<SQL
+SELECT * FROM carddata
+INNER JOIN cardnames ON carddata.multiverseid = cardnames.multiverseid
+WHERE carddata.cardname = :cardname'
+SQL);
 				$stmt->bindValue( ':cardname', $name );
 				$stmt->execute();
 				$ret = $stmt->fetch();
