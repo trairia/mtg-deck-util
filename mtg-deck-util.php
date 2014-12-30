@@ -153,7 +153,6 @@ SQL;
 	}
 
 	function menu_page(){
-		phpinfo();
 		global $wpdb;
 		$ret = $wpdb->get_results(<<<SQL
 SELECT refkey FROM wp_mtg_decklist
@@ -198,14 +197,15 @@ SQL
 		$player    = $deck['player'];
 		$decklist  = json_decode( $deck['decklist_json'], true);
 		$mainboard = $decklist["MainBoard"];
-		$lands     = isset( $mainboard[LAND] )        ? $mainboard[LAND]        : null;
-		$creatures = isset( $mainboard[CREATURE] )    ? $mainboard[CREATURE]    : null;
-		$instant   = isset( $mainboard[INSTANT] )     ? $mainboard[INSTANT]     : null;
-		$sorcery   = isset( $mainboard[SORCERY] )     ? $mainboard[SORCERY]     : null;
-		$artifact  = isset( $mainboard[ARTIFACT] )    ? $mainboard[ARTIFACT]    : null;
-		$enchant   = isset( $mainboard[ENCHANTMENT] ) ? $mainboard[ENCHANTMENT] : null;
-		$planeswlaker = isset( $mainboard[PLANESWALKER] ) ? $mainboard[PLANESWALKER] : null;
+		$lands     = isset( $mainboard[LAND] )        ? $mainboard[LAND]        : array();
+		$creatures = isset( $mainboard[CREATURE] )    ? $mainboard[CREATURE]    : array();
+		$instant   = isset( $mainboard[INSTANT] )     ? $mainboard[INSTANT]     : array();
+		$sorcery   = isset( $mainboard[SORCERY] )     ? $mainboard[SORCERY]     : array();
+		$artifact  = isset( $mainboard[ARTIFACT] )    ? $mainboard[ARTIFACT]    : array();
+		$enchant   = isset( $mainboard[ENCHANTMENT] ) ? $mainboard[ENCHANTMENT] : array();
+		$planeswlaker = isset( $mainboard[PLANESWALKER] ) ? $mainboard[PLANESWALKER] : array();
 		$sideboard = $decklist["SideBoard"];
+		DEBUG_DUMP($sideboard);
 		include(__DIR__ . "/pages/decklist.php");
 	}
 	
@@ -277,7 +277,6 @@ SQL
 	}
 	
 	function parse_deck( $deck ){
-		
 		$lines = explode( "\n", $deck );
 		$lines = array_map( 'trim', $lines );
 		$lines = array_filter( $lines, 'strlen' );
@@ -300,7 +299,7 @@ SQL
 			list( $num, $name ) = array_map( 'trim', explode( ' ', $l , 2 ) );
 			$num = intval($num);
 
-
+			
 			try{
 				/// pull card data from db
 				$pdo = null;
@@ -315,19 +314,20 @@ SQL
 								   array( PDO::ATTR_ERRMODE => ERRMODE_EXCEPTION,
 										  PDO::ATTR_EMULATE_PREPARES => false ) );
 				}
-				$stmt = $pdo->prepare(<<<SQL
+				$stmt = $pdo->prepare(
+					"
 SELECT * FROM carddata
 INNER JOIN cardnames ON carddata.multiverseid = cardnames.multiverseid
-WHERE carddata.cardname = :cardname'
-SQL);
+WHERE carddata.cardname = :cardname
+	");
 				$stmt->bindValue( ':cardname', $name );
 				$stmt->execute();
 				$ret = $stmt->fetch();
 				/// get main card type
 				if ( !is_null( $ret ) ){
 					/// decide cardname
-					$retname = $ret['ja'];
-
+					$retname = $ret["ja"];
+					DEBUG_DUMP( array($name, $ret['ja']) );
 					if ( $target == "MainBoard" ){
 						/// for color pie
 						$ckey = "multicolor";
@@ -407,7 +407,6 @@ SQL);
 		foreach ( $type_hist as $k => $v ){
 			array_push( $ret_types, array( $k, $v ) );
 		}
-
 		return array( $deck, $ret_cmc_hist, $ret_colors, $ret_types );
 	}
 }
