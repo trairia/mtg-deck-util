@@ -153,6 +153,7 @@ SQL;
 	}
 
 	function menu_page(){
+		phpinfo();
 		global $wpdb;
 		$ret = $wpdb->get_results(<<<SQL
 SELECT refkey FROM wp_mtg_decklist
