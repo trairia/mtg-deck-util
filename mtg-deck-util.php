@@ -158,12 +158,14 @@ SQL;
 	}
 
 	function menu_page(){
-		global $wpdb;
-		$ret = $wpdb->get_results(<<<SQL
-SELECT refkey FROM wp_mtg_decklist
-SQL
-		);
-		DEBUG_DUMP( $ret );
+		require_once( __DIR__ . "/pages/decks_list_view.php");
+		$deck_list_table = new Deck_List_Table();
+		echo '<div class="wrap"><h2>';
+		echo __( 'List of Decks' , 'mtg-deck-util' );
+		echo '</h2>';
+		$deck_list_table->prepare_items();
+		$deck_list_table->display();
+		echo '</div>';
 	}
 
 	/// load deck_menu.css
@@ -195,7 +197,8 @@ SQL
 			$this->draw_deck_list( $result );
 		}
 	}
-	
+
+	/// Decklist Drawer
 	function draw_deck_list( $deck ){
 		$deckname  = $deck['deckname'];
 		$format    = $deck['format'];
@@ -211,6 +214,17 @@ SQL
 		$planeswlaker = isset( $mainboard[PLANESWALKER] ) ? $mainboard[PLANESWALKER] : array();
 		$sideboard = $decklist["SideBoard"];
 		include(__DIR__ . "/pages/decklist.php");
+	}
+
+	function list_of_decks(){
+		global $wpdb;
+		
+		$decks = $wpdb->get_results(
+"
+SELECT refkey, deckname, format, player from wp_mtg_decklist;
+"
+		);
+		DEBUG_DUMP($decks);
 	}
 	
 	function register_new_deck(){
@@ -350,7 +364,7 @@ WHERE carddata.cardname=:search_target" );
 							default:
 								break;
 						}
-						if ( array_key_exists( $ckey, $color_hist ) ){
+						if ( isset( $color_hist[$ckey] ) ) {
 							$color_hist[$ckey] += $num;
 						} else {
 							$color_hist[$ckey] = $num;
@@ -359,7 +373,7 @@ WHERE carddata.cardname=:search_target" );
 						/// covered manacost
 						$cmc = $ret["cmc"];
 
-						if ( array_key_exists( $cmc, $cmc_hist ) ){
+						if ( isset( $cmc_hist[$cmc] ) ){
 							$cmc_hist[$cmc] += $num;
 						} else {
 							$cmc_hist[$cmc] = $num;
@@ -369,13 +383,13 @@ WHERE carddata.cardname=:search_target" );
 						for ( $type = CREATURE; $type <= TRIBAL; $type = $type * 2 ){
 							/// for type pie
 							if ( $type == ( $ret["typecode"] & $type) ){
-								if ( array_key_exists( $type, $type_hist) ){
+								if ( isset( $type_hist[$type] ) ){
 									$type_hist[$type] += $num;
 								} else {
 									$type_hist[$type] = $num;
 								}
 								/// deck data
-								if ( array_key_exists( $type, $deck[$target] ) ){
+								if ( isset( $deck[$target][$type] ) ){
 									array_push( $deck[$target][$type], array( "num" => $num,
 																			  "name" => $retname ) );
 								} else {
