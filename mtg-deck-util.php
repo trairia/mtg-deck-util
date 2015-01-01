@@ -11,7 +11,7 @@ Domain Path: /languages
 */
 
 /// for using sqlite db
-define( "USE_SQLITE", true);
+define( "USE_SQLITE", false);
 define( "SQLITE_DB_PATH", __DIR__ . '/db/mtgdb.db' );
 
 /// define card type
@@ -89,6 +89,7 @@ SQL;
 		dbDelta( $sql );
 	}
 
+	/// check db version when plugin update
 	public static function update_db_check(){
 		if ( get_option( 'mtg_decklist_db_version' ) != self::MTG_DECKLIST_DB_VER ){
 			self::db_install();
@@ -107,24 +108,28 @@ SQL;
 		add_shortcode( 'deck', array( $this, 'deck_import' ) );
 	}
 
+	/// register or enqueue css
 	function register_styles(){
-
 		/// css for deck register 
 		wp_register_style(
 			'menu_deck',
 			plugins_url( 'styles/menu_deck.css', __FILE__ )
 		);
 	}
-	
+
+	/// register or enqueue javascript
 	function enqueue_scripts(){
 		wp_enqueue_script( 'google-chart', 'https://www.google.com/jsapi' );
 	}
 
+	/// register options
 	function register_options(){
 		/// data base version
 		add_option( 'mtg_decklist_db_version' );
 	}
-	
+
+
+	/// init admin
 	function admin_init(){
 		$this->register_styles();
 		$this->enqueue_scripts();
@@ -205,7 +210,6 @@ SQL
 		$enchant   = isset( $mainboard[ENCHANTMENT] ) ? $mainboard[ENCHANTMENT] : array();
 		$planeswlaker = isset( $mainboard[PLANESWALKER] ) ? $mainboard[PLANESWALKER] : array();
 		$sideboard = $decklist["SideBoard"];
-		DEBUG_DUMP($sideboard);
 		include(__DIR__ . "/pages/decklist.php");
 	}
 	
@@ -226,22 +230,24 @@ SQL
 			$player   = sanitize_text_field( $_POST['player_name'] );
 			$format   = $_POST['format'];
 			$refkey   = sanitize_text_field( $_POST['ref_key'] );
-			$decklisttxt = trim( esc_textarea( $_POST["decklist"] ) );
-			
+			$decklisttxt = esc_textarea( $_POST["decklist"] );
+			$decklisttxt = str_replace( "\\", "", $decklisttxt );
+
 			if ( ! empty( $decklisttxt ) ){
 				list( $decklist, $manacurve, $colorpie, $typepie )
 					= $this->parse_deck( $decklisttxt );
-				$this->store_deck_to_db(
-					$refkey,
-					$deckname,
-					$format,
-					$player,
-					$decklisttxt,
-					$decklist,
-					$manacurve,
-					$colorpie,
-					$typepie
-					);
+
+				/* $this->store_deck_to_db(
+				   $refkey,
+				   $deckname,
+				   $format,
+				   $player,
+				   $decklisttxt,
+				   $decklist,
+				   $manacurve,
+				   $colorpie,
+				   $typepie
+				   ); */
 			}
 		}
 		
@@ -289,7 +295,6 @@ SQL
 		$type_hist = array();
 		$color_hist = array();
 		$target = "MainBoard";
-
 		foreach ( $lines as $l ){
 
 			if ( 0 == strcasecmp( "sideboard", $l ) ){
@@ -298,36 +303,40 @@ SQL
 			}
 			list( $num, $name ) = array_map( 'trim', explode( ' ', $l , 2 ) );
 			$num = intval($num);
-
-			
 			try{
 				/// pull card data from db
 				$pdo = null;
 				if ( USE_SQLITE ){
-					$pdo = new PDO("sqlite:" . SQLITE_DB_PATH,
-								   '',
-								   '');
+					$pdo = new PDO(
+						"sqlite:" . SQLITE_DB_PATH,
+						'',
+						''
+					);
 				} else {
-					$pdo = new PDO("mysql:dbname=mtgdb;host=localhost;port=3306;charset=utf8",
-								   "mtgdb",
-								   "mtgdb",
-								   array( PDO::ATTR_ERRMODE => ERRMODE_EXCEPTION,
-										  PDO::ATTR_EMULATE_PREPARES => false ) );
+					$pdo = new PDO(
+						"mysql:dbname=mtgdb;host=localhost;port=3306;charset=utf8",
+						"root",
+						"wordpress",
+						array(
+							PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+							PDO::ATTR_EMULATE_PREPARES => false
+						)
+					);
 				}
 				$stmt = $pdo->prepare(
-					"
+"
 SELECT * FROM carddata
-INNER JOIN cardnames ON carddata.multiverseid = cardnames.multiverseid
-WHERE carddata.cardname = :cardname
-	");
-				$stmt->bindValue( ':cardname', $name );
+INNER JOIN cardname ON carddata.multiverseid=cardname.multiverseid
+WHERE carddata.cardname=:search_target" );
+
+				$stmt->bindValue( ":search_target", $name, PDO::PARAM_STR );
 				$stmt->execute();
 				$ret = $stmt->fetch();
+
 				/// get main card type
 				if ( !is_null( $ret ) ){
 					/// decide cardname
 					$retname = $ret["ja"];
-					DEBUG_DUMP( array($name, $ret['ja']) );
 					if ( $target == "MainBoard" ){
 						/// for color pie
 						$ckey = "multicolor";
@@ -357,7 +366,7 @@ WHERE carddata.cardname = :cardname
 						}
 
 
-						for ( $type = CREATURE; $type <= PLANESWALKER; $type = $type * 2 ){
+						for ( $type = CREATURE; $type <= TRIBAL; $type = $type * 2 ){
 							/// for type pie
 							if ( $type == ( $ret["typecode"] & $type) ){
 								if ( array_key_exists( $type, $type_hist) ){
@@ -381,7 +390,7 @@ WHERE carddata.cardname = :cardname
 				}
 			} catch ( Exception $e ){
 				$error = $e->getMessage();
-				echo $error;
+				DEBUG_DUMP($error);
 			}
 
 
