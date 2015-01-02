@@ -9,6 +9,19 @@ if ( ! class_exists( 'WP_List_Table' ) ){
 
 class Deck_List_Table extends WP_List_Table{
 
+	var $num_selected = 0;
+	function __construct(){
+		global $status, $page;
+		
+		parent::__construct(
+			array(
+				'singular' => 'deck',
+				'plural' => 'decks',
+				'ajax' => false
+			)
+		);
+	}
+	
 	function get_columns(){
 		$columns = array(
 			'cb' => '<input type="checkbox" />',
@@ -26,10 +39,12 @@ class Deck_List_Table extends WP_List_Table{
 		$hidden = array();
 		$sortable = array();
 		$this->_column_headers = array( $columns, $hidden, $sortable );
+		$this->process_bulk_action();
 		$this->items = $wpdb->get_results(
 			"SELECT id, refkey, deckname, format, player from wp_mtg_decklist",
 			ARRAY_A
 		);
+
 	}
 
 	function column_default( $item, $column_name ){
@@ -53,10 +68,39 @@ class Deck_List_Table extends WP_List_Table{
 
 	function column_cb( $item ){
 		return sprintf(
-			'<input type="checkbox" name="deck[]" value="%s" />',
+			'<input type="checkbox" name="%1$s[]" value="%2$s" />',
+			$this->_args['singular'],
 			$item['id']
 		);
 	}
+
+	function process_bulk_action(){
+		if ( 'delete' === $this->current_action() ){
+			foreach( $_GET['deck'] as $deck ){
+				$this->delete_deck( $deck );
+			}
+		}
+	}
+
+	function delete_deck( $deck ){
+		global $wpdb;
+		$wpdb->delete(
+			'wp_mtg_decklist',
+			array( 'id' => intval($deck) ),
+			array( '%d' )
+		);
+	}
 }
+$deck_list_table = new Deck_List_Table();
+$deck_list_table->prepare_items();
 ?>
 
+<div class="wrap">
+	<h2>
+	<?php echo __( 'List of Decks', 'mtg-deck-util' ) ?>
+	</h2>
+	<form method="get">
+		<input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>">
+		<?php $deck_list_table->display() ?>
+	</form>
+</div>
