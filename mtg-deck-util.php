@@ -162,10 +162,10 @@ SQL;
 		$deck_list_table = new Deck_List_Table();
 		echo '<div class="wrap"><h2>';
 		echo __( 'List of Decks' , 'mtg-deck-util' );
-		echo '</h2>';
+		echo '</h2><form>';
 		$deck_list_table->prepare_items();
 		$deck_list_table->display();
-		echo '</div>';
+		echo '</form></div>';
 	}
 
 	/// load deck_menu.css
