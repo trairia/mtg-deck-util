@@ -154,18 +154,17 @@ SQL;
 			'mtgdeckutil-add-deck',
 			array( $this, 'register_new_deck' )
 		);
-		add_action( 'admin_print_styles-' . $deck_menu, array( $this, 'load_deck_menu_style' ) );
+		
+		add_action( 'admin_print_styles-' . $deck_menu,
+					array(
+						$this,
+						'load_deck_menu_style'
+					)
+		);
 	}
 
 	function menu_page(){
-		require_once( __DIR__ . "/pages/decks_list_view.php");
-		$deck_list_table = new Deck_List_Table();
-		echo '<div class="wrap"><h2>';
-		echo __( 'List of Decks' , 'mtg-deck-util' );
-		echo '</h2><form>';
-		$deck_list_table->prepare_items();
-		$deck_list_table->display();
-		echo '</form></div>';
+		include( __DIR__ . "/pages/decks_list_view.php");
 	}
 
 	/// load deck_menu.css
@@ -251,7 +250,7 @@ SELECT refkey, deckname, format, player from wp_mtg_decklist;
 				list( $decklist, $manacurve, $colorpie, $typepie )
 					= $this->parse_deck( $decklisttxt );
 
-				/* $this->store_deck_to_db(
+				$this->store_deck_to_db(
 				   $refkey,
 				   $deckname,
 				   $format,
@@ -261,7 +260,7 @@ SELECT refkey, deckname, format, player from wp_mtg_decklist;
 				   $manacurve,
 				   $colorpie,
 				   $typepie
-				   ); */
+				   );
 			}
 		}
 		
@@ -390,16 +389,32 @@ WHERE carddata.cardname=:search_target" );
 								}
 								/// deck data
 								if ( isset( $deck[$target][$type] ) ){
-									array_push( $deck[$target][$type], array( "num" => $num,
-																			  "name" => $retname ) );
+									array_push(
+										$deck[$target][$type],
+										array(
+											"num" => $num,
+											"name" => $retname
+										)
+									);
 								} else {
-									$deck[$target][$type] = array( array("num" => $num, "name"=> $retname) );
+									$deck[$target][$type] = array(
+										array(
+											"num" => $num,
+											"name"=> $retname
+										)
+									);
 								}
 								break;
 							}
 						}
 					} else {
-						array_push($deck[$target], array( "num" => $num, "name" => $retname ));
+						array_push(
+							$deck[$target],
+							array(
+								"num" => $num,
+								"name" => $retname
+							)
+						);
 					}
 				}
 			} catch ( Exception $e ){
