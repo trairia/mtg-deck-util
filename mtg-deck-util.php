@@ -126,6 +126,9 @@ SQL;
 	function register_options(){
 		/// data base version
 		add_option( 'mtg_decklist_db_version' );
+
+		/// language conversion option
+		add_option( 'mtg_lang' );
 	}
 
 
