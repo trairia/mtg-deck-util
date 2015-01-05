@@ -14,6 +14,14 @@ Domain Path: /languages
 define( "USE_SQLITE", false);
 define( "SQLITE_DB_PATH", __DIR__ . '/db/mtgdb.db' );
 
+/// about card database
+define( "MTGDB_NAME", 'mtgdb' );
+define( "MTGDB_HOST", 'localhost' );
+define( "MTGDB_USER", 'root' );
+define( "MTGDB_PASS", 'wordpress' );
+define( "MTGDB_PORT", '3306' );
+define( "MTGDB_CHARSET", 'utf8' );
+
 /// define card type
 define( "CREATURE"    , 0x01);
 define( "LAND"        , 0x02);
@@ -329,10 +337,12 @@ SELECT refkey, deckname, format, player from wp_mtg_decklist;
 						''
 					);
 				} else {
+					$dsn = "mysql:dbname=" . MTGDB_NAME . ";host=" . MTGDB_HOST;
+					$dsn = $dsn . ";port=" . MTGDB_PORT . ";charset=" . MTGDB_CHARSET;
 					$pdo = new PDO(
-						"mysql:dbname=mtgdb;host=localhost;port=3306;charset=utf8",
-						"root",
-						"wordpress",
+						$dsn,
+						MTGDB_USER,
+						MTGDB_PASS,
 						array(
 							PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
 							PDO::ATTR_EMULATE_PREPARES => false
