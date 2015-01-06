@@ -354,6 +354,7 @@ HTML;
 	}
 	
 	function parse_deck( $deck ){
+		$lang = get_option( 'mtg-util-lang' );
 		$lines = explode( "\n", $deck );
 		$lines = array_map( 'trim', $lines );
 		$lines = array_filter( $lines, 'strlen' );
@@ -409,7 +410,7 @@ WHERE carddata.cardname=:search_target" );
 				/// get main card type
 				if ( !is_null( $ret ) ){
 					/// decide cardname
-					$retname = $ret["ja"];
+					$retname = $ret[ $lang ];
 					if ( $target == "MainBoard" ){
 						/// for color pie
 						$ckey = "multicolor";
