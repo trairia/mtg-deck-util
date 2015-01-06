@@ -136,10 +136,50 @@ SQL;
 		add_option( 'mtg_decklist_db_version' );
 
 		/// language conversion option
-		add_option( 'mtg_lang' );
+		register_setting( 'mtg-deck-util-group', 'mtg-util-lang', 'esc_attr' );
+		add_settings_section(
+			'mtg-deck-util-general',
+			__( 'General', 'mtg-deck-util'),
+			array( $this, 'general_setting_callback' ),
+			'mtgdeckutil'
+		);
+		add_settings_field(
+			'mtg-util-lang',
+			__( 'Language', 'mtg-deck-util' ),
+			array( $this, 'set_lang_callback' ),
+			'mtgdeckutil',
+			'mtg-deck-util-general'
+		);
 	}
 
+	function general_setting_callback(){
+	}
 
+	function set_lang_callback(){
+		$setting = esc_attr( get_option( 'mtg-util-lang' ) );
+		$lang_map = array(
+			'en' => __( 'English', 'mtg-deck-util' ),
+			'ja' => __( 'Japanese', 'mtg-deck-util' ),
+			'zh_cn' => __( 'Simplified Chinese', 'mtg-deck-util' ),
+			'zh_tw' => __( 'Traditional Chinese', 'mtg-deck-util' ),
+			'fr' => __( 'French', 'mtg-deck-util' ),
+			'de' => __( 'German', 'mtg-deck-util' ),
+			'it' => __( 'Italiano', 'mtg-deck-util' ),
+			'ko' => __( 'Korean', 'mtg-deck-util' ),
+			'ru' => __( 'Russian', 'mtg-deck-util' ),
+			'pt' => __( 'Portuguese', 'mtg-deck-util' )
+		);
+		echo "<select name='mtg-util-lang' value='$setting'>";
+		foreach( $lang_map as $key => $val ){
+			$selected = '';
+			if ( $setting == $key ){
+				$selected="selected='selected'";
+			}
+			echo "<option value='$key' $selected>$val</option>";
+		}
+		echo "</select>";
+	}
+	
 	/// init admin
 	function admin_init(){
 		$this->register_styles();
@@ -149,7 +189,7 @@ SQL;
 
 	function plugin_menu(){
 		
-		add_menu_page(
+		add_options_page(
 			__('Magic the Gaghering Deck Utility', 'mtg-deck-util'),
 			__('MtG Deck Utility', 'mtg-deck-util'),
 			'manage_options',
@@ -157,8 +197,7 @@ SQL;
 			array( $this, 'menu_page' )
 		);
 		
-		$deck_menu =  add_submenu_page(
-			'mtgdeckutil',
+		$deck_menu =  add_options_page(
 			__('Add New Deck', 'mtg-deck-util'),
 			__('Add New Deck', 'mtg-deck-util'),
 			'manage_options',
@@ -175,6 +214,17 @@ SQL;
 	}
 
 	function menu_page(){
+		echo <<<HTML
+<div class="wrap">
+  <h2> MtG Deck Util Options </h2>
+  <form action="options.php" method="POST">
+HTML;
+		settings_fields( 'mtg-deck-util-group' );
+		do_settings_sections( 'mtgdeckutil' );
+		submit_button();
+		echo "</form></div>";
+
+		/// include list of decks
 		include( __DIR__ . "/pages/decks_list_view.php");
 	}
 
@@ -226,17 +276,7 @@ SQL;
 		include(__DIR__ . "/pages/decklist.php");
 	}
 
-	function list_of_decks(){
-		global $wpdb;
-		
-		$decks = $wpdb->get_results(
-"
-SELECT refkey, deckname, format, player from wp_mtg_decklist;
-"
-		);
-		DEBUG_DUMP($decks);
-	}
-	
+
 	function register_new_deck(){
 		$formats = array(
 			'Standard' => __('Standard', 'mtg-deck-util'),
