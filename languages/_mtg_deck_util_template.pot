@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-28 16:01+0900\n"
+"POT-Creation-Date: 2015-01-06 23:49+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,27 +17,75 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: mtg-deck-util.php:121
+#: mtg-deck-util.php:142
+msgid "General"
+msgstr ""
+
+#: mtg-deck-util.php:148
+msgid "Language"
+msgstr ""
+
+#: mtg-deck-util.php:161
+msgid "English"
+msgstr ""
+
+#: mtg-deck-util.php:162
+msgid "Japanese"
+msgstr ""
+
+#: mtg-deck-util.php:163
+msgid "Simplified Chinese"
+msgstr ""
+
+#: mtg-deck-util.php:164
+msgid "Traditional Chinese"
+msgstr ""
+
+#: mtg-deck-util.php:165
+msgid "French"
+msgstr ""
+
+#: mtg-deck-util.php:166
+msgid "German"
+msgstr ""
+
+#: mtg-deck-util.php:167
+msgid "Italiano"
+msgstr ""
+
+#: mtg-deck-util.php:168
+msgid "Korean"
+msgstr ""
+
+#: mtg-deck-util.php:169
+msgid "Russian"
+msgstr ""
+
+#: mtg-deck-util.php:170
+msgid "Portuguese"
+msgstr ""
+
+#: mtg-deck-util.php:193
 msgid "Magic the Gaghering Deck Utility"
 msgstr ""
 
-#: mtg-deck-util.php:122
+#: mtg-deck-util.php:194
 msgid "MtG Deck Utility"
 msgstr ""
 
-#: mtg-deck-util.php:130 mtg-deck-util.php:131
+#: mtg-deck-util.php:201 mtg-deck-util.php:202
 msgid "Add New Deck"
 msgstr ""
 
-#: mtg-deck-util.php:154
+#: mtg-deck-util.php:282
 msgid "Standard"
 msgstr ""
 
-#: mtg-deck-util.php:155
+#: mtg-deck-util.php:283
 msgid "Modern"
 msgstr ""
 
-#: mtg-deck-util.php:156
+#: mtg-deck-util.php:284
 msgid "Legacy"
 msgstr ""
 
@@ -49,15 +97,15 @@ msgstr ""
 msgid "Deckname"
 msgstr ""
 
-#: pages/deck_form.php:6
+#: pages/deck_form.php:6 pages/decks_list_view.php:31
 msgid "Player"
 msgstr ""
 
-#: pages/deck_form.php:8
+#: pages/deck_form.php:8 pages/decks_list_view.php:28
 msgid "Reference Key"
 msgstr ""
 
-#: pages/deck_form.php:10
+#: pages/deck_form.php:10 pages/decks_list_view.php:30
 msgid "Format"
 msgstr ""
 
@@ -67,4 +115,20 @@ msgstr ""
 
 #: pages/deck_form.php:22
 msgid "Register Deck"
+msgstr ""
+
+#: pages/decklist.php:27
+msgid "Sideboard"
+msgstr ""
+
+#: pages/decks_list_view.php:29
+msgid "Deck Name"
+msgstr ""
+
+#: pages/decks_list_view.php:64
+msgid "Delete"
+msgstr ""
+
+#: pages/decks_list_view.php:100
+msgid "List of Decks"
 msgstr ""
