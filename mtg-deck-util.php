@@ -107,6 +107,13 @@ SQL;
 	
 	/// Initialize the plugin
 	function __construct(){
+		/// setting language path
+		load_plugin_textdomain(
+			'mtg-deck-util',
+			false,
+			dirname( plugin_basename(__FILE__) ) . '/languages'
+		);
+		
 		/// admin_hook
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		/// plugin menu page
