@@ -221,7 +221,7 @@ SQL;
 		$sorcery   = isset( $mainboard[SORCERY] )     ? $mainboard[SORCERY]     : array();
 		$artifact  = isset( $mainboard[ARTIFACT] )    ? $mainboard[ARTIFACT]    : array();
 		$enchant   = isset( $mainboard[ENCHANTMENT] ) ? $mainboard[ENCHANTMENT] : array();
-		$planeswlaker = isset( $mainboard[PLANESWALKER] ) ? $mainboard[PLANESWALKER] : array();
+		$planeswalker = isset( $mainboard[PLANESWALKER] ) ? $mainboard[PLANESWALKER] : array();
 		$sideboard = $decklist["SideBoard"];
 		include(__DIR__ . "/pages/decklist.php");
 	}
