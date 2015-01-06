@@ -1,3 +1,11 @@
+<?php
+function count_num( $data ){
+	$num = 0;
+	foreach( $data as $d ){
+		$num += $d['num'];
+	}
+}
+?>
 <div class="decklist">
 	<div class="deck_list_header"><?php echo $deckname ?>/<?php echo $player ?></div>
 	<div class="pile_land">
@@ -11,7 +19,7 @@
 		<?php } ?>
 	</div>
 	<div class="pile_spell">
-		<?php foreach ( array_merge( $instant, $sorcery, $artifact ) as $s) {?>
+		<?php foreach ( array_merge( $instant, $sorcery, $artifact, $enchant, $planeswalker ) as $s) {?>
 			<?php echo $s['num'] ?> <?php echo $s['name'] ?> <br />
 		<?php } ?>
 	</div>
