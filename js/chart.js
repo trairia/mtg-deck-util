@@ -1,31 +1,48 @@
 
 google.load('visualization', '1.0', {'packages': ['corechart']});
-google.setOnLoadCallback(chart_drawer.draw);
+google.setOnLoadCallback(drawChart);
 
-var Chart = function(){
-    this.charts = [];
-    this.data = [];
-    this.options = [];
-};
-
-Chart.prototype.add_chart = function (id, func) {
-    var data_json = document.getElementById(id).getAttribute('data');
-    var data = JSON.parse(data_json);
-    this.data.push(google.visualization.arrayToDataTable(data));
-    var opt_json = document.getElementById(id).getAttribute('data_opt');
-    var opt = JSON.parse(opt_json);
-    this.options.push(opt);
-    var chart = new func(document.getElementById(id));
-    this.charts.push(chart);
-};
-
-Chart.prototype.draw = function(){
-    for(i=0; i<this.charts.length; i++){
-	this.charts[i].draw(this.data[i], this.options[i]);
+function drawChart(){
+    var types = [['manacurve', 'column'],
+		 ['colorpie', 'pie'],
+		 ['typepie', 'pie']];
+    for(i = 0; i < types.length; i++){
+	var div = document.getElementById(types[i][0]);
+	if (!div)
+	    continue;
+	var data_json = JSON.parse(div.getAttribute('data'));
+	if (!data_json)
+	    continue;
+	var data = google.visualization.arrayToDataTable(
+	    data_json
+	);
+	var opt_json = div.getAttribute('data_opt');
+	var opt = null;
+	if (opt_json){
+	    opt = JSON.parse(opt_json);
+	}else{
+	    if (types[i][1] === 'column'){
+		opt = {hAxis:{ticks:[]}};
+		for(j = 0; j < data_json.length-1; j++){
+		    opt.hAxis.ticks.push(j);
+		}
+	    }else{
+		opt = {};
+	    }
+	}
+	var chart = null;
+	switch(types[i][1]){
+	case 'column':
+	    chart = new google.visualization.ColumnChart(document.getElementById(types[i][0]));
+	    break;
+	case 'pie':
+	    chart = new google.visualization.PieChart(document.getElementById(types[i][0]));
+	    break;
+	default:
+	    break;
+	}
+	if (chart){
+	    chart.draw(data, opt);
+	}
     }
-};
-
-chart_drawer = new Chart();
-chart_drawer.add_chart('manacurve', google.visualization.ColumnChart);
-chart_drawer.add_chart('colorpie', google.visualization.PieChart);
-chart_drawer.add_chart('typepie', google.visualization.PieChart);
+}
