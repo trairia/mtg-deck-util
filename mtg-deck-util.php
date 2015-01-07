@@ -277,7 +277,9 @@ HTML;
 			DEBUG_DUMP($result);
 			$this->draw_deck_list( $result );
 			$manacurve = $result['manacurve_json'];
-			echo "<div id='manacurve' data='$manacurve'>";
+			$colorpie = $result['colorpie_json'];
+			echo "<div id='manacurve' data='$manacurve'></div>";
+			echo "<div id='colorpie' data='$colorpie'></div>";
 		}
 	}
 
