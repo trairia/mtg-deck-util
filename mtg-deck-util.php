@@ -17,8 +17,8 @@ define( "SQLITE_DB_PATH", __DIR__ . '/db/mtgdb.db' );
 /// about card database
 define( "MTGDB_NAME", 'mtgdb' );
 define( "MTGDB_HOST", 'localhost' );
-define( "MTGDB_USER", 'root' );
-define( "MTGDB_PASS", 'wordpress' );
+define( "MTGDB_USER", 'mtgdb' );
+define( "MTGDB_PASS", 'mtgdb' );
 define( "MTGDB_PORT", '3306' );
 define( "MTGDB_CHARSET", 'utf8' );
 
@@ -121,6 +121,8 @@ SQL;
 
 		/// shortcode
 		add_shortcode( 'deck', array( $this, 'deck_import' ) );
+
+		add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts' ) );
 	}
 
 	/// register or enqueue css
@@ -133,12 +135,18 @@ SQL;
 	}
 
 	/// register or enqueue javascript
-	function enqueue_scripts(){
-		wp_enqueue_script( 'google-chart', 'https://www.google.com/jsapi' );
+	function register_scripts(){
+		wp_enqueue_script( 'google-chart',
+						   'https://www.google.com/jsapi',
+						   '',
+						   '',
+						   true);
 		wp_enqueue_script(
 			'chart-js',
-			plugins_url( 'js/chart.js', __FILE__),
-			array( 'google-chart' )
+			plugins_url( '/js/chart.js', __FILE__ ),
+			array( 'google-chart' ),
+			'',
+			true
 		);
 	}
 
@@ -195,7 +203,7 @@ SQL;
 	/// init admin
 	function admin_init(){
 		$this->register_styles();
-		$this->enqueue_scripts();
+		$this->register_scripts();
 		$this->register_options();
 	}
 
@@ -268,6 +276,8 @@ HTML;
 			);
 			DEBUG_DUMP($result);
 			$this->draw_deck_list( $result );
+			$manacurve = $result['manacurve_json'];
+			echo "<div id='manacurve' data='$manacurve'>";
 		}
 	}
 
