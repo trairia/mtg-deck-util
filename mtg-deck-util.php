@@ -135,6 +135,11 @@ SQL;
 	/// register or enqueue javascript
 	function enqueue_scripts(){
 		wp_enqueue_script( 'google-chart', 'https://www.google.com/jsapi' );
+		wp_enqueue_script(
+			'chart-js',
+			plugins_url( 'js/chart.js', __FILE__),
+			array( 'google-chart' )
+		);
 	}
 
 	/// register options
@@ -261,6 +266,7 @@ HTML;
 				),
 				ARRAY_A
 			);
+			DEBUG_DUMP($result);
 			$this->draw_deck_list( $result );
 		}
 	}
