@@ -365,7 +365,12 @@ HTML;
 			$this->draw_deck_list( $result );
 			$manacurve = $result['manacurve_json'];
 			$manacurve_color = get_option( 'mtg-manacurve-color', 'blue' );
-			$chart_opt = json_encode( array( 'colors' => array( $manacurve_color ) ) );
+			$chart_opt = json_encode(
+				array(
+					'colors' => array( $manacurve_color ),
+					'legend' => array( 'position' => 'none' )
+				)
+			);
 			$colorpie = $result['colorpie_json'];
 			$pie_opt = $this->generate_colors_from_pie( $colorpie );
 			echo "<div id='manacurve' data='$manacurve' data_opt='$chart_opt'></div>";
