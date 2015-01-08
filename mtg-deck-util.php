@@ -184,6 +184,7 @@ SQL;
 		//// general setting section option
 		/// language
 		register_setting( 'mtg-deck-util-group', 'mtg-util-lang', 'esc_attr' );
+		register_setting( 'mtg-deck-util-group', 'mtg-cardname-fmt', 'esc_html' );
 		add_settings_section(
 			'mtg-deck-util-general',
 			__( 'General', 'mtg-deck-util'),
@@ -199,6 +200,14 @@ SQL;
 			'mtg-deck-util-general'
 		);
 
+		add_settings_field(
+			'mtg-cardname-fmt',
+			__( 'Cardname Format', 'mtg-deck-util' ),
+			array( $this, 'set_cardname_format' ),
+			'mtgdeckutil',
+			'mtg-deck-util-general'
+		);
+		
 		/// color setting section
 		add_settings_section(
 			'mtg-deck-util-colors',
@@ -287,6 +296,16 @@ SQL;
 		}
 		echo "<input class='color' name='$name' $val>";
 	}
+
+	function set_cardname_format(){
+		$fmt = get_option( 'mtg-cardname-fmt', esc_html('<%n>'));
+		echo "<input class='text' name='mtg-cardname-fmt' value='$fmt'><br/>";
+		echo esc_html("%n : " . __("Card name in locale selected", 'mtg-deck-util'));
+		echo "<br/>";
+		echo esc_html("%N : " . __("English card name", 'mtg-deck-util'));
+		echo "<br/>";
+		echo esc_html("Example <%n/%N> ==> <name in locale/name in English>");
+	}
 	
 	/// init admin
 	function admin_init(){
@@ -294,7 +313,6 @@ SQL;
 		$this->register_scripts();
 		$this->register_options();
 	}
-
 	function plugin_menu(){
 		
 		add_options_page(
@@ -373,8 +391,8 @@ HTML;
 			);
 			$colorpie = $result['colorpie_json'];
 			$pie_opt = $this->generate_colors_from_pie( $colorpie );
-			echo "<div id='manacurve' data='$manacurve' data_opt='$chart_opt'></div>";
-			echo "<div id='colorpie' data='$colorpie' data_opt='$pie_opt'></div>";
+
+			include( __DIR__ . "/pages/chart.php");
 		}
 	}
 
