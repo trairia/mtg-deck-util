@@ -37,6 +37,22 @@ register_activation_hook(   __FILE__, array( 'MtGDeckUtil', 'on_activate' ) );
 register_deactivation_hook( __FILE__, array( 'MtGDeckUtil', 'on_deactive' ) );
 register_uninstall_hook(    __FILE__, array( 'MtGDeckUtil', 'on_uninstall' ) );
 
+$color_name_conv = array(
+	'W' => __( 'White', 'mtg-deck-util' ),
+	'U' => __( 'Blue', 'mtg-deck-util' ),
+	'B' => __( 'Black', 'mtg-deck-util' ),
+	'R' => __( 'Red', 'mtg-deck-util' ),
+	'G' => __( 'Green', 'mtg-deck-util' ),
+	'multicolor' => __( 'MultiColored', 'mtg-deck-util' ),
+	'colorless' => __( 'ColorLess', 'mtg-deck-util' )
+);
+
+
+/// sanitizer for hex color string
+function sanitize_color( $str ){
+	return '#' . esc_html( $str );
+}
+
 /// Plugin Implement
 class MtGDeckUtil{
 
@@ -148,6 +164,16 @@ SQL;
 			'',
 			true
 		);
+
+		if ( is_admin() ){
+			wp_enqueue_script(
+				'jscolor',
+				plugins_url( 'js/jscolor.js', __FILE__),
+				array(),
+				'',
+				false
+			);
+		}
 	}
 
 	/// register options
@@ -155,14 +181,16 @@ SQL;
 		/// data base version
 		add_option( 'mtg_decklist_db_version' );
 
-		/// language conversion option
+		//// general setting section option
+		/// language
 		register_setting( 'mtg-deck-util-group', 'mtg-util-lang', 'esc_attr' );
 		add_settings_section(
 			'mtg-deck-util-general',
 			__( 'General', 'mtg-deck-util'),
-			array( $this, 'general_setting_callback' ),
+			null,
 			'mtgdeckutil'
 		);
+
 		add_settings_field(
 			'mtg-util-lang',
 			__( 'Language', 'mtg-deck-util' ),
@@ -170,11 +198,47 @@ SQL;
 			'mtgdeckutil',
 			'mtg-deck-util-general'
 		);
+
+		/// color setting section
+		add_settings_section(
+			'mtg-deck-util-colors',
+			__( 'Colors', 'mtg-deck-util' ),
+			null,
+			'mtgdeckutil'
+		);
+
+		register_setting(
+			'mtg-deck-util-group',
+			'mtg-colorless-color',
+			'sanitize_color' );
+
+		register_setting(
+			'mtg-deck-util-group',
+			'mtg-multicolor-color',
+			'sanitize_color'
+		);
+		
+		add_settings_field(
+			'mtg-colorless-color',
+			__( 'Color for `ColorLess`', 'mtg-deck-util' ),
+			array( $this, 'set_color_callback' ),
+			'mtgdeckutil',
+			'mtg-deck-util-colors',
+			array( 'name' => 'mtg-colorless-color' )
+		);
+
+		add_settings_field(
+			'mtg-multicolor-color',
+			__( 'Color for `MultiColored`', 'mtg-deck-util' ),
+			array( $this, 'set_color_callback' ),
+			'mtgdeckutil',
+			'mtg-deck-util-colors',
+			array( 'name' => 'mtg-multicolor-color' )
+		);
+
 	}
 
-	function general_setting_callback(){
-	}
-
+	
 	function set_lang_callback(){
 		$setting = esc_attr( get_option( 'mtg-util-lang' ) );
 		$lang_map = array(
@@ -198,6 +262,11 @@ SQL;
 			echo "<option value='$key' $selected>$val</option>";
 		}
 		echo "</select>";
+	}
+
+	function set_color_callback($args){
+		$name = isset( $args['name']) ? $args['name'] : '' ;
+		echo "<input class='color' name='$name'>";
 	}
 	
 	/// init admin
