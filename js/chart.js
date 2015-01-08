@@ -20,14 +20,13 @@ function drawChart(){
 	var opt = null;
 	if (opt_json){
 	    opt = JSON.parse(opt_json);
-	}else{
-	    if (types[i][1] === 'column'){
-		opt = {hAxis:{ticks:[]}};
+	}
+	if (opt){
+	    if(types[i][1] === 'column'){
+		opt['hAxis'] = {ticks:[]};
 		for(j = 0; j < data_json.length-1; j++){
 		    opt.hAxis.ticks.push(j);
 		}
-	    }else{
-		opt = {};
 	    }
 	}
 	var chart = null;
