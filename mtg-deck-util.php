@@ -37,7 +37,7 @@ register_activation_hook(   __FILE__, array( 'MtGDeckUtil', 'on_activate' ) );
 register_deactivation_hook( __FILE__, array( 'MtGDeckUtil', 'on_deactive' ) );
 register_uninstall_hook(    __FILE__, array( 'MtGDeckUtil', 'on_uninstall' ) );
 
-$color_name_conv = array(
+$COLOR_NAME_CONV = array(
 	'W' => __( 'White', 'mtg-deck-util' ),
 	'U' => __( 'Blue', 'mtg-deck-util' ),
 	'B' => __( 'Black', 'mtg-deck-util' ),
@@ -50,7 +50,7 @@ $color_name_conv = array(
 
 /// sanitizer for hex color string
 function sanitize_color( $str ){
-	return '#' . esc_html( $str );
+	return esc_html( $str );
 }
 
 /// Plugin Implement
@@ -209,6 +209,12 @@ SQL;
 
 		register_setting(
 			'mtg-deck-util-group',
+			'mtg-manacurve-color',
+			'sanitize_color'
+		);
+		
+		register_setting(
+			'mtg-deck-util-group',
 			'mtg-colorless-color',
 			'sanitize_color' );
 
@@ -216,6 +222,15 @@ SQL;
 			'mtg-deck-util-group',
 			'mtg-multicolor-color',
 			'sanitize_color'
+		);
+
+		add_settings_field(
+			'mtg-manacurve-color',
+			__( 'Color for Manacurve', 'mtg-deck-util' ),
+			array( $this, 'set_color_callback' ),
+			'mtgdeckutil',
+			'mtg-deck-util-colors',
+			array( 'name' => 'mtg-manacurve-color' )
 		);
 		
 		add_settings_field(
@@ -266,7 +281,11 @@ SQL;
 
 	function set_color_callback($args){
 		$name = isset( $args['name']) ? $args['name'] : '' ;
-		echo "<input class='color' name='$name'>";
+		$val = get_option( $name );
+		if ( $val ){
+			$val = "value='" . $val . "'";
+		}
+		echo "<input class='color' name='$name' $val>";
 	}
 	
 	/// init admin
@@ -343,15 +362,35 @@ HTML;
 				),
 				ARRAY_A
 			);
-			DEBUG_DUMP($result);
 			$this->draw_deck_list( $result );
 			$manacurve = $result['manacurve_json'];
+			$manacurve_color = get_option( 'mtg-manacurve-color', 'blue' );
+			$chart_opt = json_encode( array( 'colors' => array( $manacurve_color ) ) );
 			$colorpie = $result['colorpie_json'];
-			echo "<div id='manacurve' data='$manacurve'></div>";
-			echo "<div id='colorpie' data='$colorpie'></div>";
+			$pie_opt = $this->generate_colors_from_pie( $colorpie );
+			echo "<div id='manacurve' data='$manacurve' data_opt='$chart_opt'></div>";
+			echo "<div id='colorpie' data='$colorpie' data_opt='$pie_opt'></div>";
 		}
 	}
 
+	function generate_colors_from_pie( $json ){
+		$color_map = array(
+			'Red' => 'red',
+			'White' => 'white',
+			'Blue' => 'blue',
+			'Black' => 'black',
+			'Green' => 'green',
+			'MultiColored' => get_option( 'mtg-multicolor-color', 'yellow'),
+			'ColorLess' => get_option( 'mtg-colorless-color', 'gray')
+		);
+		$colors = array();
+		$pie_data = json_decode( $json, true );
+		for( $i = 1; $i < count($pie_data); $i++ ){
+			array_push($colors, $color_map[$pie_data[$i][0]]);
+		}
+		return json_encode( array( 'colors' => $colors ), true );
+	}
+	
 	/// Decklist Drawer
 	function draw_deck_list( $deck ){
 		$deckname  = $deck['deckname'];
@@ -583,9 +622,10 @@ WHERE carddata.cardname=:search_target" );
 		}
 
 		// create color pie data for google chart
+		global $COLOR_NAME_CONV;
 		$ret_colors = array( array( "color", "ammount") );
 		foreach ( $color_hist as $c => $v ){
-			array_push( $ret_colors, array( $c, $v ) );
+			array_push( $ret_colors, array( $COLOR_NAME_CONV[$c], $v ) );
 		}
 
 		// create type pie data
