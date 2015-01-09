@@ -47,10 +47,13 @@ $COLOR_NAME_CONV = array(
 	'colorless' => __( 'ColorLess', 'mtg-deck-util' )
 );
 
-
 /// sanitizer for hex color string
 function sanitize_color( $str ){
 	return esc_html( $str );
+}
+
+function get_attr( array $arr, $attr, $default=null ){
+	return isset( $arr[$attr] ) ? $arr[$attr] : $default;
 }
 
 /// Plugin Implement
@@ -421,17 +424,16 @@ HTML;
 		$player    = $deck['player'];
 		$decklist  = json_decode( $deck['decklist_json'], true);
 		$mainboard = $decklist["MainBoard"];
-		$lands     = isset( $mainboard[LAND] )        ? $mainboard[LAND]        : array();
-		$creatures = isset( $mainboard[CREATURE] )    ? $mainboard[CREATURE]    : array();
-		$instant   = isset( $mainboard[INSTANT] )     ? $mainboard[INSTANT]     : array();
-		$sorcery   = isset( $mainboard[SORCERY] )     ? $mainboard[SORCERY]     : array();
-		$artifact  = isset( $mainboard[ARTIFACT] )    ? $mainboard[ARTIFACT]    : array();
-		$enchant   = isset( $mainboard[ENCHANTMENT] ) ? $mainboard[ENCHANTMENT] : array();
-		$planeswalker = isset( $mainboard[PLANESWALKER] ) ? $mainboard[PLANESWALKER] : array();
-		$sideboard = $decklist["SideBoard"];
+		$lands     = get_attr( $mainboard, LAND, array() );
+		$creatures = get_attr( $mainboard, CREATURE, array() );
+		$instant   = get_attr( $mainboard, INSTANT, array() );
+		$sorcery   = get_attr( $mainboard, SORCERY, array() );
+		$artifact  = get_attr( $mainboard, ARTIFACT, array() );
+		$enchant   = get_attr( $mainboard, ENCHANTMENT, array() );
+		$planeswalker = get_attr( $mainboard, PLANESWALKER, array() );
+		$sideboard = get_attr( $decklist, "SideBoard", array() );
 		include(__DIR__ . "/pages/decklist.php");
 	}
-
 
 	function register_new_deck(){
 		$formats = array(
