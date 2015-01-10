@@ -228,50 +228,65 @@ SQL;
 			'mtgdeckutil'
 		);
 
-		register_setting(
-			'mtg-deck-util-group',
-			'mtg-manacurve-color',
-			'sanitize_color'
+		$conf_colors = array(
+			array(
+				'name' => 'mtg-color-manacurve',
+				'help' => __( 'Color of Manacurve', 'mtg-deck-util' ),
+				'default' => '#0000FF'
+			),
+			array(
+				'name' => 'mtg-color-white',
+				'help' => __('White Color', 'mtg-deck-util' ),
+				'default' => '#FFFFFF'
+			),
+			array(
+				'name' => 'mtg-color-blue',
+				'help' => __( 'Blue Color', 'mtg-deck-util' ),
+				'default' => '#0000FF'
+			),
+			array(
+				'name' => 'mtg-color-black',
+				'help' => __( 'Black Color', 'mtg-deck-util' ),
+				'default' => '#000000'
+			),
+			array(
+				'name' => 'mtg-color-red',
+				'help' => __( 'Red Color', 'mtg-deck-util' ),
+				'default' => '#FF0000'
+			),
+			array(
+				'name' => 'mtg-color-green',
+				'help' => __( 'Green Color', 'mtg-deck-util' ),
+				'default' => '#00FF00'
+			),
+			array(
+				'name' => 'mtg-color-colorless',
+				'help' => __( 'ColorLess Color', 'mtg-deck-util' ),
+				'default' => '#808080'
+			),
+			array(
+				'name' => 'mtg-color-multicolor',
+				'help' => __( 'MultiColored Color', 'mtg-deck-util' ),
+				'default' => '#CCCC00'
+			)
 		);
-		
-		register_setting(
-			'mtg-deck-util-group',
-			'mtg-colorless-color',
-			'sanitize_color' );
 
-		register_setting(
-			'mtg-deck-util-group',
-			'mtg-multicolor-color',
-			'sanitize_color'
-		);
+		foreach( $conf_colors as $color ){
+			register_setting(
+				'mtg-deck-util-group',
+				$color['name'],
+				'sanitize_color'
+			);
 
-		add_settings_field(
-			'mtg-manacurve-color',
-			__( 'Color for Manacurve', 'mtg-deck-util' ),
-			array( $this, 'set_color_callback' ),
-			'mtgdeckutil',
-			'mtg-deck-util-colors',
-			array( 'name' => 'mtg-manacurve-color' )
-		);
-		
-		add_settings_field(
-			'mtg-colorless-color',
-			__( 'Color for `ColorLess`', 'mtg-deck-util' ),
-			array( $this, 'set_color_callback' ),
-			'mtgdeckutil',
-			'mtg-deck-util-colors',
-			array( 'name' => 'mtg-colorless-color' )
-		);
-
-		add_settings_field(
-			'mtg-multicolor-color',
-			__( 'Color for `MultiColored`', 'mtg-deck-util' ),
-			array( $this, 'set_color_callback' ),
-			'mtgdeckutil',
-			'mtg-deck-util-colors',
-			array( 'name' => 'mtg-multicolor-color' )
-		);
-
+			add_settings_field(
+				$color['name'],
+				$color['help'],
+				array( $this, 'set_color_callback' ),
+				'mtgdeckutil',
+				'mtg-deck-util-colors',
+				$color
+			);
+		}
 	}
 
 	
@@ -301,8 +316,9 @@ SQL;
 	}
 
 	function set_color_callback($args){
-		$name = isset( $args['name']) ? $args['name'] : '' ;
-		$val = get_option( $name );
+		$name = get_attr( $args, 'name', '');
+		$default = get_attr( $args, 'default' );
+		$val = get_option( $name, $default );
 		if ( $val ){
 			$val = "value='" . $val . "'";
 		}
@@ -410,13 +426,13 @@ HTML;
 
 	function generate_colors_from_pie( $json ){
 		$color_map = array(
-			'Red' => 'red',
-			'White' => 'white',
-			'Blue' => 'blue',
-			'Black' => 'black',
-			'Green' => 'green',
-			'MultiColored' => get_option( 'mtg-multicolor-color', 'yellow'),
-			'ColorLess' => get_option( 'mtg-colorless-color', 'gray')
+			'Red'   => get_option( 'mtg-color-red' ),
+			'White' => get_option( 'mtg-color-white' ),
+			'Blue'  => get_option( 'mtg-color-blue' ),
+			'Black' => get_option( 'mtg-color-black' ),
+			'Green' => get_option( 'mtg-color-green' ), 
+			'MultiColored' => get_option( 'mtg-color-multicolor' ),
+			'ColorLess' => get_option( 'mtg-color-colorless' )
 		);
 		$colors = array();
 		$pie_data = json_decode( $json, true );
