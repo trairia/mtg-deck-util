@@ -425,14 +425,15 @@ HTML;
 	}
 
 	function generate_colors_from_pie( $json ){
+		global $COLOR_NAME_CONV;
 		$color_map = array(
-			'Red'   => get_option( 'mtg-color-red' ),
-			'White' => get_option( 'mtg-color-white' ),
-			'Blue'  => get_option( 'mtg-color-blue' ),
-			'Black' => get_option( 'mtg-color-black' ),
-			'Green' => get_option( 'mtg-color-green' ), 
-			'MultiColored' => get_option( 'mtg-color-multicolor' ),
-			'ColorLess' => get_option( 'mtg-color-colorless' )
+			$COLOR_NAME_CONV['R'] => get_option( 'mtg-color-red', 'red' ),
+			$COLOR_NAME_CONV['W'] => get_option( 'mtg-color-white', 'white' ),
+			$COLOR_NAME_CONV['U'] => get_option( 'mtg-color-blue', 'blue' ),
+			$COLOR_NAME_CONV['B'] => get_option( 'mtg-color-black', 'black' ),
+			$COLOR_NAME_CONV['G'] => get_option( 'mtg-color-green', 'green' ), 
+			$COLOR_NAME_CONV['multicolor'] => get_option( 'mtg-color-multicolor', 'yellow' ),
+			$COLOR_NAME_CONV['colorless'] => get_option( 'mtg-color-colorless', 'gray' )
 		);
 		$colors = array();
 		$pie_data = json_decode( $json, true );
