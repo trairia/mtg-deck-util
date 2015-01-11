@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-06 23:49+0900\n"
+"POT-Creation-Date: 2015-01-11 23:11+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,75 +17,163 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: mtg-deck-util.php:142
+#: mtg-deck-util.php:41
+msgid "White"
+msgstr ""
+
+#: mtg-deck-util.php:42
+msgid "Blue"
+msgstr ""
+
+#: mtg-deck-util.php:43
+msgid "Black"
+msgstr ""
+
+#: mtg-deck-util.php:44
+msgid "Red"
+msgstr ""
+
+#: mtg-deck-util.php:45
+msgid "Green"
+msgstr ""
+
+#: mtg-deck-util.php:46
+msgid "MultiColored"
+msgstr ""
+
+#: mtg-deck-util.php:47
+msgid "ColorLess"
+msgstr ""
+
+#: mtg-deck-util.php:249
 msgid "General"
 msgstr ""
 
-#: mtg-deck-util.php:148
+#: mtg-deck-util.php:256
 msgid "Language"
 msgstr ""
 
-#: mtg-deck-util.php:161
+#: mtg-deck-util.php:264
+msgid "Cardname Format"
+msgstr ""
+
+#: mtg-deck-util.php:272
+msgid "Bracket style"
+msgstr ""
+
+#: mtg-deck-util.php:281
+msgid "Colors"
+msgstr ""
+
+#: mtg-deck-util.php:289
+msgid "Color of Manacurve"
+msgstr ""
+
+#: mtg-deck-util.php:294
+msgid "White Color"
+msgstr ""
+
+#: mtg-deck-util.php:299
+msgid "Blue Color"
+msgstr ""
+
+#: mtg-deck-util.php:304
+msgid "Black Color"
+msgstr ""
+
+#: mtg-deck-util.php:309
+msgid "Red Color"
+msgstr ""
+
+#: mtg-deck-util.php:314
+msgid "Green Color"
+msgstr ""
+
+#: mtg-deck-util.php:319
+msgid "ColorLess Color"
+msgstr ""
+
+#: mtg-deck-util.php:324
+msgid "MultiColored Color"
+msgstr ""
+
+#: mtg-deck-util.php:351
 msgid "English"
 msgstr ""
 
-#: mtg-deck-util.php:162
+#: mtg-deck-util.php:352
 msgid "Japanese"
 msgstr ""
 
-#: mtg-deck-util.php:163
+#: mtg-deck-util.php:353
 msgid "Simplified Chinese"
 msgstr ""
 
-#: mtg-deck-util.php:164
+#: mtg-deck-util.php:354
 msgid "Traditional Chinese"
 msgstr ""
 
-#: mtg-deck-util.php:165
+#: mtg-deck-util.php:355
 msgid "French"
 msgstr ""
 
-#: mtg-deck-util.php:166
+#: mtg-deck-util.php:356
 msgid "German"
 msgstr ""
 
-#: mtg-deck-util.php:167
+#: mtg-deck-util.php:357
 msgid "Italiano"
 msgstr ""
 
-#: mtg-deck-util.php:168
+#: mtg-deck-util.php:358
 msgid "Korean"
 msgstr ""
 
-#: mtg-deck-util.php:169
+#: mtg-deck-util.php:359
 msgid "Russian"
 msgstr ""
 
-#: mtg-deck-util.php:170
+#: mtg-deck-util.php:360
 msgid "Portuguese"
 msgstr ""
 
-#: mtg-deck-util.php:193
+#: mtg-deck-util.php:388
+msgid "Only English name"
+msgstr ""
+
+#: mtg-deck-util.php:392
+msgid "locale selected name"
+msgstr ""
+
+#: mtg-deck-util.php:396
+msgid "locale selected / English"
+msgstr ""
+
+#: mtg-deck-util.php:400
+msgid "English / locale selected"
+msgstr ""
+
+#: mtg-deck-util.php:454
 msgid "Magic the Gaghering Deck Utility"
 msgstr ""
 
-#: mtg-deck-util.php:194
+#: mtg-deck-util.php:455
 msgid "MtG Deck Utility"
 msgstr ""
 
-#: mtg-deck-util.php:201 mtg-deck-util.php:202
+#: mtg-deck-util.php:462 mtg-deck-util.php:463
 msgid "Add New Deck"
 msgstr ""
 
-#: mtg-deck-util.php:282
+#: mtg-deck-util.php:574
 msgid "Standard"
 msgstr ""
 
-#: mtg-deck-util.php:283
+#: mtg-deck-util.php:575
 msgid "Modern"
 msgstr ""
 
-#: mtg-deck-util.php:284
+#: mtg-deck-util.php:576
 msgid "Legacy"
 msgstr ""
 

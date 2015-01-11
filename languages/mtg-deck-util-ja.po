@@ -1,100 +1,182 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
 msgid ""
 msgstr ""
-"Project-Id-Version: mtg-deck-util\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-06 23:49+0900\n"
-"PO-Revision-Date: 2015-01-06 23:59+0900\n"
+"POT-Creation-Date: 2015-01-11 23:11+0900\n"
+"PO-Revision-Date: 2015-01-11 23:16+0900\n"
 "Last-Translator: Kazunori Kimura <kazunori.abu@gmail.com>\n"
 "Language-Team: \n"
-"Language: ja_JP\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.7.1\n"
+"X-Poedit-Basepath: .\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Poedit-Basepath: ../\n"
-"X-Poedit-SearchPath-0: pages\n"
 
-#: mtg-deck-util.php:142
+#: mtg-deck-util.php:41
+msgid "White"
+msgstr "白"
+
+#: mtg-deck-util.php:42
+msgid "Blue"
+msgstr "青"
+
+#: mtg-deck-util.php:43
+msgid "Black"
+msgstr "黒"
+
+#: mtg-deck-util.php:44
+msgid "Red"
+msgstr "赤"
+
+#: mtg-deck-util.php:45
+msgid "Green"
+msgstr "緑"
+
+#: mtg-deck-util.php:46
+msgid "MultiColored"
+msgstr "多色"
+
+#: mtg-deck-util.php:47
+msgid "ColorLess"
+msgstr "無色"
+
+#: mtg-deck-util.php:249
 msgid "General"
 msgstr "一般"
 
-#: mtg-deck-util.php:148
+#: mtg-deck-util.php:256
 msgid "Language"
 msgstr "言語"
 
-#: mtg-deck-util.php:161
+#: mtg-deck-util.php:264
+msgid "Cardname Format"
+msgstr "カード名表記"
+
+#: mtg-deck-util.php:272
+msgid "Bracket style"
+msgstr "括弧の選択"
+
+#: mtg-deck-util.php:281
+msgid "Colors"
+msgstr "色の設定"
+
+#: mtg-deck-util.php:289
+msgid "Color of Manacurve"
+msgstr "マナカーブ"
+
+#: mtg-deck-util.php:294
+msgid "White Color"
+msgstr "白"
+
+#: mtg-deck-util.php:299
+msgid "Blue Color"
+msgstr "青"
+
+#: mtg-deck-util.php:304
+msgid "Black Color"
+msgstr "黒"
+
+#: mtg-deck-util.php:309
+msgid "Red Color"
+msgstr "赤"
+
+#: mtg-deck-util.php:314
+msgid "Green Color"
+msgstr "緑"
+
+#: mtg-deck-util.php:319
+msgid "ColorLess Color"
+msgstr "無色"
+
+#: mtg-deck-util.php:324
+msgid "MultiColored Color"
+msgstr "多色"
+
+#: mtg-deck-util.php:351
 msgid "English"
 msgstr "英語"
 
-#: mtg-deck-util.php:162
+#: mtg-deck-util.php:352
 msgid "Japanese"
 msgstr "日本語"
 
-#: mtg-deck-util.php:163
+#: mtg-deck-util.php:353
 msgid "Simplified Chinese"
 msgstr "簡体字中国語"
 
-#: mtg-deck-util.php:164
+#: mtg-deck-util.php:354
 msgid "Traditional Chinese"
 msgstr "繁体字中国語"
 
-#: mtg-deck-util.php:165
+#: mtg-deck-util.php:355
 msgid "French"
 msgstr "フランス語"
 
-#: mtg-deck-util.php:166
+#: mtg-deck-util.php:356
 msgid "German"
 msgstr "ドイツ語"
 
-#: mtg-deck-util.php:167
+#: mtg-deck-util.php:357
 msgid "Italiano"
 msgstr "イタリア語"
 
-#: mtg-deck-util.php:168
+#: mtg-deck-util.php:358
 msgid "Korean"
 msgstr "韓国・朝鮮語"
 
-#: mtg-deck-util.php:169
+#: mtg-deck-util.php:359
 msgid "Russian"
 msgstr "ロシア語"
 
-#: mtg-deck-util.php:170
+#: mtg-deck-util.php:360
 msgid "Portuguese"
 msgstr "ポルトガル語"
 
-#: mtg-deck-util.php:193
+#: mtg-deck-util.php:388
+msgid "Only English name"
+msgstr "英語名のみ"
+
+#: mtg-deck-util.php:392
+msgid "locale selected name"
+msgstr "選択された言語のみ"
+
+#: mtg-deck-util.php:396
+msgid "locale selected / English"
+msgstr "選択された言語 / 英語"
+
+#: mtg-deck-util.php:400
+msgid "English / locale selected"
+msgstr "英語 / 選択された言語"
+
+#: mtg-deck-util.php:454
 msgid "Magic the Gaghering Deck Utility"
 msgstr ""
 
-#: mtg-deck-util.php:194
+#: mtg-deck-util.php:455
 msgid "MtG Deck Utility"
 msgstr ""
 
-#: mtg-deck-util.php:201 mtg-deck-util.php:202
+#: mtg-deck-util.php:462 mtg-deck-util.php:463
 msgid "Add New Deck"
 msgstr "デッキの追加"
 
-#: mtg-deck-util.php:282
+#: mtg-deck-util.php:574
 msgid "Standard"
-msgstr ""
+msgstr "スタンダード"
 
-#: mtg-deck-util.php:283
+#: mtg-deck-util.php:575
 msgid "Modern"
-msgstr ""
+msgstr "モダン"
 
-#: mtg-deck-util.php:284
+#: mtg-deck-util.php:576
 msgid "Legacy"
-msgstr ""
+msgstr "レガシー"
 
 #: pages/deck_form.php:2
 msgid "Register New Deck"
-msgstr "新規デッキの登録"
+msgstr "デッキの登録"
 
 #: pages/deck_form.php:4
 msgid "Deckname"
