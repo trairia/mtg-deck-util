@@ -56,13 +56,12 @@ function get_attr( array $arr, $attr, $default=null ){
 	return isset( $arr[$attr] ) ? $arr[$attr] : $default;
 }
 
-function update_attr( array $arr, $attr, $value ){
+function update_attr( array &$arr, $attr, $value ){
 	if ( isset( $arr[$attr] ) ){
 		$arr[$attr] += $value;
 	}else{
 		$arr[$attr] = $value;
 	}
-	return $arr;
 }
 
 /// Plugin Implement
@@ -601,15 +600,15 @@ WHERE carddata.cardname=:search_target" );
 							default:
 								break;
 						}
-						$color_hist = update_attr( $color_hist, $ckey, $num );
+						update_attr( $color_hist, $ckey, $num );
 						/// covered manacost
 						$cmc = $ret["cmc"];
-						$cmc_hist = update_attr( $cmc_hist, $cmc, $num );
+						update_attr( $cmc_hist, $cmc, $num );
 
 						for ( $type = CREATURE; $type <= TRIBAL; $type = $type * 2 ){
 							/// for type pie
 							if ( $type == ( $ret["typecode"] & $type) ){
-								$type_hist = update_attr( $type_hist, $type, $num );
+								update_attr( $type_hist, $type, $num );
 
 								/// deck data
 								if ( isset( $deck[$target][$type] ) ){
