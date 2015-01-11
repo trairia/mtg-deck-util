@@ -64,6 +64,53 @@ function update_attr( array &$arr, $attr, $value ){
 	}
 }
 
+class CardNameFormatter{
+	var $fmtstr = '';
+	var $fmtstrsingle = '';
+	var $arg_ids = array();
+	function __construct(){
+		$bracket_type = get_option( 'mtg-bracket-style', 'angle' );
+		$cardname_fmt = get_option( 'mtg-cardname-fmt', 'en' );
+		$this->fmtstrsingle = '%s';
+		switch( $cardname_fmt ){
+			case 'en':
+			case 'lo':
+				$this->fmtstr = '%s';
+				array_push( $this->arg_ids, 'en_name' );
+				break;
+			case 'en_lo':
+				$this->fmtstr = '%s/%s';
+				array_push( $this->arg_ids, 'en_name', 'name' );
+				break;
+			case 'lo_en':
+				$this->fmtstr = '%s/%s';
+				array_push( $this->arg_ids, 'name', 'en_name' );
+				break;
+		}
+		if ( $bracket_type === 'angle' ){
+			$this->fmtstr = '<' . $this->fmtstr . '>';
+			$this->fmtstrsingle = '<' . $this->fmtstrsingle . '>';
+		} else {
+			$this->fmtstr = '《' . $this->fmtstr . '》';
+			$this->fmtstrsingle = '《' . $this->fmtstrsingle . '》';
+		}
+		$this->fmtstr = esc_html( $this->fmtstr );
+		$this->fmtstrsingle = esc_html( $this->fmtstrsingle );
+	}
+
+	function format( $card ){
+		/// check name === en_name
+		if ( $card['name'] === $card['en_name'] ){
+			return sprintf( $this->fmtstrsingle, $card['en_name'] );
+		}
+		$args = array();
+		foreach( $this->arg_ids as $id ){
+			array_push( $args, $card[$id] );
+		}
+		return vsprintf( $this->fmtstr, $args );
+	}
+};
+
 /// Plugin Implement
 class MtGDeckUtil{
 
@@ -196,6 +243,7 @@ SQL;
 		/// language
 		register_setting( 'mtg-deck-util-group', 'mtg-util-lang', 'esc_attr' );
 		register_setting( 'mtg-deck-util-group', 'mtg-cardname-fmt', 'esc_html' );
+		register_setting( 'mtg-deck-util-group', 'mtg-bracket-style', 'esc_html' );
 		add_settings_section(
 			'mtg-deck-util-general',
 			__( 'General', 'mtg-deck-util'),
@@ -215,6 +263,14 @@ SQL;
 			'mtg-cardname-fmt',
 			__( 'Cardname Format', 'mtg-deck-util' ),
 			array( $this, 'set_cardname_format' ),
+			'mtgdeckutil',
+			'mtg-deck-util-general'
+		);
+
+		add_settings_field(
+			'mtg-bracket-style',
+			__( 'Bracket style', 'mtg-deck-util' ),
+			array( $this, 'set_bracket_style' ),
 			'mtgdeckutil',
 			'mtg-deck-util-general'
 		);
@@ -325,13 +381,65 @@ SQL;
 	}
 
 	function set_cardname_format(){
-		$fmt = get_option( 'mtg-cardname-fmt', esc_html('<%n>'));
-		echo "<input class='text' name='mtg-cardname-fmt' value='$fmt'><br/>";
-		echo esc_html("%n : " . __("Card name in locale selected", 'mtg-deck-util'));
-		echo "<br/>";
-		echo esc_html("%N : " . __("English card name", 'mtg-deck-util'));
-		echo "<br/>";
-		echo esc_html("Example <%n/%N> ==> <name in locale/name in English>");
+		$fmt = get_option( 'mtg-cardname-fmt' );
+		$options = array(
+			array(
+				'value' => 'en',
+				'text' => __( 'Only English name', 'mtg-deck-util' )
+			),
+			array(
+				'value' => 'lo',
+				'text' => __( 'locale selected name', 'mtg-deck-util' )
+			),
+			array(
+				'value' => 'lo_en',
+				'text' => __( 'locale selected / English', 'mtg-deck-util' )
+			),
+			array(
+				'value' => 'en_lo',
+				'text' => __( 'English / locale selected', 'mtg-deck-util' )
+			)
+		);
+
+		echo "<select name='mtg-cardname-fmt'>";
+		foreach( $options as $op ){
+			$selected = '';
+			$val = $op['value'];
+			$text = $op['text'];
+			if ( $op['value'] == $fmt ){
+				$selected = "selected='selected'";
+			}
+			echo "<option value='$val' $selected> $text </option>";
+		}
+		echo "</select>";
+	}
+
+	function set_bracket_style(){
+		$current = get_option( 'mtg-bracket-style', 'angle' );
+		$bracket_type = array(
+			array(
+				'id' => 'angle',
+				'value' => 'angle',
+				'text' => esc_html( '<cardname>' )
+			),
+			array(
+				'id' => 'dangle',
+				'value' => 'dangle',
+				'text' => '《cardname》'
+			)
+		);
+		foreach( $bracket_type as $type ){
+			$checked = '';
+			if ( $type['value'] === $current ){
+				$checked = "checked='checked'";
+			}
+			echo "<input type='radio' name='mtg-bracket-style' ";
+			echo "value=" . $type['value'] . " id='" . $type['id'] . "' $checked>";
+			echo "<label for='" . $type['id'] . "'>";
+			echo $type['text'];
+			echo "</label>";
+			echo " ";
+		}
 	}
 	
 	/// init admin
@@ -457,6 +565,7 @@ HTML;
 		$enchant   = get_attr( $mainboard, ENCHANTMENT, array() );
 		$planeswalker = get_attr( $mainboard, PLANESWALKER, array() );
 		$sideboard = get_attr( $decklist, "SideBoard", array() );
+		$formatter = new CardNameFormatter();
 		include(__DIR__ . "/pages/decklist.php");
 	}
 
@@ -586,7 +695,7 @@ WHERE carddata.cardname=:search_target" );
 				/// get main card type
 				if ( !is_null( $ret ) ){
 					/// decide cardname
-					$retname = $ret[ $lang ];
+					$retname = get_attr( $ret, $lang, $name );
 					if ( $target == "MainBoard" ){
 						/// for color pie
 						$ckey = "multicolor";
@@ -616,14 +725,16 @@ WHERE carddata.cardname=:search_target" );
 										$deck[$target][$type],
 										array(
 											"num" => $num,
-											"name" => $retname
+											"name" => $retname,
+											"en_name" => $name
 										)
 									);
 								} else {
 									$deck[$target][$type] = array(
 										array(
 											"num" => $num,
-											"name"=> $retname
+											"name" => $retname,
+											"en_name" => $name
 										)
 									);
 								}
@@ -635,7 +746,8 @@ WHERE carddata.cardname=:search_target" );
 							$deck[$target],
 							array(
 								"num" => $num,
-								"name" => $retname
+								"name" => $retname,
+								"en_name" => $name
 							)
 						);
 					}
@@ -644,8 +756,6 @@ WHERE carddata.cardname=:search_target" );
 				$error = $e->getMessage();
 				DEBUG_DUMP($error);
 			}
-
-
 		}
 		ksort($cmc_hist);
 
